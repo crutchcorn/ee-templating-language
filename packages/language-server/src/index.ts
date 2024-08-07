@@ -1,6 +1,4 @@
 import { createConnection, createServer, createTypeScriptProject, Diagnostic, loadTsdkByPath } from '@volar/language-server/node';
-import { create as createCssService } from 'volar-service-css';
-import { create as createEmmetService } from 'volar-service-emmet';
 import { create as createHtmlService } from 'volar-service-html';
 import { create as createTypeScriptServices } from 'volar-service-typescript';
 import { URI } from 'vscode-uri';
@@ -18,8 +16,6 @@ connection.onInitialize(params => {
 		createTypeScriptProject(tsdk.typescript, tsdk.diagnosticMessages, () => [eeLanguagePlugin]),
 		[
 			createHtmlService(),
-			createCssService(),
-			createEmmetService(),
 			...createTypeScriptServices(tsdk.typescript),
 			{
 				capabilities: {

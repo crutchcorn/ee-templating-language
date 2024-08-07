@@ -18,9 +18,40 @@
 		"languages": [
 			{
 				"id": "ee",
+				"icon": {
+					"light": "images/ee.png",
+					"dark": "images/ee.png"
+				},
 				"extensions": [
 					".ee"
 				]
+			}
+		],
+		"grammars": [
+			{
+				"language": "ee",
+				"scopeName": "source.ee",
+				"path": "./syntaxes/ee.tmLanguage.json",
+				"embeddedLanguages": {
+					"source.ee": "ee",
+					"text.html.derivative": "html",
+					"text.html.markdown": "markdown",
+					"source.ts": "typescript",
+					"source.css": "css",
+					"source.css.scss": "scss",
+					"source.css.less": "less",
+					"source.sass": "sass",
+					"source.stylus": "stylus",
+					"source.postcss": "postcss",
+					"source.vue": "vue",
+					"source.coffee": "coffee",
+					"source.json": "json",
+					"source.json.comments": "jsonc",
+					"source.json5": "json5",
+					"source.yaml": "yaml",
+					"source.toml": "toml",
+					"source.graphql": "graphql"
+				}
 			}
 		]
 	},

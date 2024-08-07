@@ -1,0 +1,9 @@
+<setup>
+const hello = 123;
+</setup>
+
+<output lang="json">
+{
+    "test": <<hello>>
+}
+</output>

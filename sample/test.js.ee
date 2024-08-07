@@ -1,7 +1,0 @@
-<setup>
-const test = 123;
-</setup>
-
-<output>
-export SOME_SECRET = <<test>>;
-</output>
