@@ -1,0 +1,14 @@
+{
+	"private": true,
+	"packageManager": "pnpm@9.1.0",
+	"scripts": {
+		"build": "cd ./packages/vscode && npm run build",
+		"watch": "cd ./packages/vscode && npm run watch",
+		"pack": "cd ./packages/vscode && npm run pack",
+		"release": "cd ./packages/vscode && npm run release"
+	},
+	"devDependencies": {
+		"@types/node": "latest",
+		"typescript": "latest"
+	}
+}

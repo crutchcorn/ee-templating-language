@@ -1,0 +1,42 @@
+{
+	"private": true,
+	"name": "vscode-ee",
+	"version": "0.0.1",
+	"categories": [
+		"Programming Languages"
+	],
+	"displayName": "EE Language Features",
+	"description": "EE Language Features",
+	"engines": {
+		"vscode": "^1.82.0"
+	},
+	"activationEvents": [
+		"onLanguage:ee"
+	],
+	"main": "./dist/client.js",
+	"contributes": {
+		"languages": [
+			{
+				"id": "ee",
+				"extensions": [
+					".ee"
+				]
+			}
+		]
+	},
+	"scripts": {
+		"build": "node scripts/build -- --minify",
+		"watch": "npm run build -- --watch",
+		"pack": "npm run build && vsce package --pre-release",
+		"release": "npm run build && vsce publish --pre-release"
+	},
+	"devDependencies": {
+		"@ee/language-server": "workspace:*",
+		"@types/vscode": "^1.82.0",
+		"@volar/language-server": "~2.3.0",
+		"@volar/vscode": "~2.3.0",
+		"esbuild": "latest",
+		"vsce": "latest",
+		"vscode-languageclient": "^9.0.1"
+	}
+}
