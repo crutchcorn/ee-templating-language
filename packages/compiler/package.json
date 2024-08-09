@@ -1,5 +1,6 @@
 {
   "name": "compiler",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,6 +13,7 @@
     "typescript": "^5.5.4"
   },
   "devDependencies": {
+    "@types/node": "^22.1.0",
     "vitest": "^2.0.5"
   }
 }

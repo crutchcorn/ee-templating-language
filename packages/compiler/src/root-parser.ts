@@ -1,4 +1,4 @@
-import { RootToken } from "./root-tokens";
+import { RootToken } from "./root-tokens.js";
 
 interface RootNode {
     setup: SetupNode;
@@ -57,6 +57,6 @@ export function parseRoot(tokens: RootToken[]): RootNode {
             rootNode[currentTag].contents += value;
         }
     }
-    
+
     return rootNode;
 }

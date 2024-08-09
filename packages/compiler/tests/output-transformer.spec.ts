@@ -1,8 +1,8 @@
 import { test, expect } from "vitest";
-import {outputTransformer} from "../src/output-transformer";
+import {transformOutput} from "../src/output-transformer";
 
 test("outputTransformer", {}, () => {
   const source = 'const someStr = `<div><<val ? "\\>\\>" : "\\<\\<">></div>`;';
-  const cleaned = outputTransformer(source);
+  const cleaned = transformOutput(source);
   expect(cleaned).toEqual('const someStr = \\`<div>${val ? ">>" : "<<"}</div>\\`;');
 })

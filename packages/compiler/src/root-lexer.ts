@@ -1,4 +1,4 @@
-import {RootToken, rootKeywords, rootDefaultKeyword, rootAttributeKeyword} from "./root-tokens";
+import {RootToken, rootKeywords, rootDefaultKeyword, rootAttributeKeyword} from "./root-tokens.js";
 
 export function tokenizeRoot(source: string): RootToken[] {
   const tokens: RootToken[] = [];

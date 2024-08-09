@@ -19,7 +19,7 @@ This means that we need to handle:
 
 All without using regex.
  */
-export function outputTransformer(output: string): string {
+export function transformOutput(output: string): string {
   const outputArr = output.split("");
   const outputArrLength = outputArr.length;
   const newOutputArr: string[] = [];
@@ -30,7 +30,7 @@ export function outputTransformer(output: string): string {
       while (j < outputArrLength) {
         if (outputArr[j - 1] !== "\\" && outputArr[j] === ">" && outputArr[j + 1] === ">") {
           newOutputArr.push("${");
-          newOutputArr.push(outputTransformer(output.substring(i + 2, j)));
+          newOutputArr.push(transformOutput(output.substring(i + 2, j)));
           newOutputArr.push("}");
           i = j + 2;
           break;
