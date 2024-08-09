@@ -18,14 +18,14 @@ test("tokenizeRoot", {}, () => {
     expect(tokens).toStrictEqual([
         { type: 'TagOpen', attributes: { name: 'setup' } },
         { type: 'Text', attributes: { value: '\nconst setup = 123;\n' } },
-        { type: 'TagOpen', attributes: { name: 'setup' } },
+        { type: 'TagClose', attributes: { name: 'setup' } },
         { type: 'Text', attributes: { value: '\n\n' } },
         { type: 'TagOpen', attributes: { name: 'output' } },
         { type: 'TagAttribute', attributes: { name: 'lang', value: 'json' } },
-        { type: 'Text', attributes: { value: '\n{\n  "test": ' } },
+        { type: 'Text', attributes: { value: '\n{\n  "test": <' } },
         { type: 'TagOpen', attributes: { name: 'setup' } },
         { type: 'Text', attributes: { value: '>\n}\n' } },
-        { type: 'TagOpen', attributes: { name: 'output' } }
+        { type: 'TagClose', attributes: { name: 'output' } }
     ]
     );
 })
