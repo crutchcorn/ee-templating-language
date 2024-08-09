@@ -29,6 +29,16 @@ export function tokenizeRoot(source: string): RootToken[] {
                 type: rootAttributeKeyword.type,
                 attributes: {name: subMatch[1], value: subMatch[2]},
               });
+            } else {
+              // Remove the opening tag and, separately, the closing angle bracket
+              currentString = currentString.slice(match[1].length + 1, currentString.length - 1);
+              if (!currentString) {
+                break;
+              }
+              tokens.push({
+                type: rootDefaultKeyword.type,
+                attributes: {value: currentString},
+              });
             }
             break;
           }

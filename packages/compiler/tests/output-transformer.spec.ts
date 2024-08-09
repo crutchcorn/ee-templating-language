@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import {transformOutput} from "../src/output-transformer";
+import {transformOutput} from "../src/output-transformer.js";
 
 test("outputTransformer", {}, () => {
   const source = 'const someStr = `<div><<val ? "\\>\\>" : "\\<\\<">></div>`;';

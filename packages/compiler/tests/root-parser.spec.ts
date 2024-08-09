@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
-import { parseRoot } from "../src/root-parser";
-import { tokenizeRoot } from "../src/root-lexer";
+import { parseRoot } from "../src/root-parser.js";
+import { tokenizeRoot } from "../src/root-lexer.js";
 
 const source = `
 <setup>
