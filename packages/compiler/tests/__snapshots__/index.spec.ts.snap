@@ -1,9 +1,25 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`compiles a basic file 1`] = `
+"
+{
+    "test": 123
+}
+"
+`;
+
 exports[`compiles a file 1`] = `
 "
 {
     "test": 123
+}
+"
+`;
+
+exports[`compiles an array-interpolated file 1`] = `
+"
+{
+    "test": one,two,three
 }
 "
 `;

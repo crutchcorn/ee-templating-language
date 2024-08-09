@@ -22,28 +22,38 @@ export function parseRoot(tokens: RootToken[]): RootNode {
     };
 
     let currentTag: keyof RootNode | null = null;
+    let hasSeenCurrentTagOpeningEnd = false;
 
     for (const token of tokens) {
         // If text token and is all whitespace, skip
         if (token.type === "Text" && !token.attributes.value.trim()) {
             continue;
         }
-        if (!currentTag && token.type === "TagOpen") {
+        if (!currentTag && token.type === "TagOpenStart") {
             currentTag = token.attributes.name as keyof RootNode;
             continue;
         }
         if (currentTag && token.type === "TagClose" && token.attributes.name === currentTag) {
             currentTag = null;
+            hasSeenCurrentTagOpeningEnd = false;
             continue;
         }
-        if (currentTag && token.type === "TagAttribute") {
+        if (!hasSeenCurrentTagOpeningEnd && currentTag && token.type === "TagAttribute") {
             rootNode[currentTag].attributes[token.attributes.name] = token.attributes.value;
             continue;
         }
-        if (currentTag) {
+        if (!hasSeenCurrentTagOpeningEnd && currentTag && token.type === "TagOpenEnd") {
+            hasSeenCurrentTagOpeningEnd = true;
+            continue;
+        }
+        // We ignore "Text" that occurs in the first tag opening
+        if (hasSeenCurrentTagOpeningEnd && currentTag) {
             let value = "";
-            if (token.type === "TagOpen") {
-                value = `<${token.attributes.name}>`;
+            if (token.type === "TagOpenStart") {
+                value = `<${token.attributes.name}`;
+            }
+            if (token.type === "TagOpenEnd") {
+                value = `>`;
             }
             if (token.type === "TagClose") {
                 value = `</${token.attributes.name}>`;
