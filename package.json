@@ -8,7 +8,7 @@
 		"release": "cd ./packages/vscode && npm run release"
 	},
 	"devDependencies": {
-		"@types/node": "latest",
-		"typescript": "latest"
+		"@types/node": "^22.1.0",
+		"typescript": "^5.5.4"
 	}
 }
