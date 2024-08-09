@@ -17,12 +17,16 @@ export const rootAttributeKeyword =
     { match: /([a-zA-Z-]+)="([^"]*)"/, type: "TagAttribute", attributes: {} as RootAttribute } as const;
 
 export const rootKeywords = [
-    { match: /<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/, type: "TagOpen", attributes: {} as RootTag },
+    // TagOpenEnd is implicit
+    { match: /<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/, type: "TagOpenStart", attributes: {} as RootTag },
     { match: /<\/([a-zA-Z][a-zA-Z0-9]*)>/, type: "TagClose", attributes: {} as RootTag }
 ] as const;
 
 export type RootToken = {
-    type: "TagOpen";
+    type: "TagOpenStart";
+    attributes: RootTag;
+} | {
+    type: "TagOpenEnd";
     attributes: RootTag;
 } | {
     type: "TagClose";

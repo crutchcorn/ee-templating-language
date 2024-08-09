@@ -18,7 +18,7 @@ export function tokenizeRoot(source: string): RootToken[] {
           currentString = currentString.slice(text.length);
         }
         switch (keyword.type) {
-          case "TagOpen": {
+          case "TagOpenStart": {
             tokens.push({
               type: keyword.type,
               attributes: {name: match[1]},
@@ -32,14 +32,17 @@ export function tokenizeRoot(source: string): RootToken[] {
             } else {
               // Remove the opening tag and, separately, the closing angle bracket
               currentString = currentString.slice(match[1].length + 1, currentString.length - 1);
-              if (!currentString) {
-                break;
+              if (currentString) {
+                tokens.push({
+                  type: rootDefaultKeyword.type,
+                  attributes: {value: currentString},
+                });
               }
-              tokens.push({
-                type: rootDefaultKeyword.type,
-                attributes: {value: currentString},
-              });
             }
+            tokens.push({
+              type: "TagOpenEnd",
+              attributes: {name: match[1]},
+            });
             break;
           }
           case "TagClose": {
