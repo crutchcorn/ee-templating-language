@@ -1,30 +1,50 @@
-import { RootToken } from "./root-tokens";
+import {RootToken, rootKeywords, rootDefaultKeyword, rootAttributeKeyword} from "./root-tokens";
 
 export function tokenizeRoot(source: string): RootToken[] {
   const tokens: RootToken[] = [];
-  const tagRegex = /<\/?(setup|output)(\s+[^>]*)?>|([^<]+)/g;
-  let match;
 
-  while ((match = tagRegex.exec(source)) !== null) {
-    if (match[0].startsWith("</")) {
-      // Closing tag
-      tokens.push({ type: "TagClose", attributes: { name: match[1] } });
-    } else if (match[1]) {
-      // Opening tag with attributes
-      tokens.push({ type: "TagOpen", attributes: { name: match[1] } });
-      if (match[2]) {
-        const attrRegex = /(\w+)=["']([^"']+)["']/g;
-        let attrMatch;
-        while ((attrMatch = attrRegex.exec(match[2])) !== null) {
+  let currentString = "";
+  for (let i = 0; i < source.length; i++) {
+    currentString += source[i];
+    for (const keyword of rootKeywords) {
+      const match = currentString.match(keyword.match);
+      if (match) {
+        const text = currentString.slice(0, currentString.length - match[0].length);
+        if (text) {
           tokens.push({
-            type: "TagAttribute",
-            attributes: { name: attrMatch[1], value: attrMatch[2] }
+            type: rootDefaultKeyword.type,
+            attributes: {value: text},
           });
+          currentString = currentString.slice(text.length);
         }
+        switch (keyword.type) {
+          case "TagOpen": {
+            tokens.push({
+              type: keyword.type,
+              attributes: {name: match[1]},
+            });
+            const subMatch = currentString.match(rootAttributeKeyword.match);
+            if (subMatch) {
+              tokens.push({
+                type: rootAttributeKeyword.type,
+                attributes: {name: subMatch[1], value: subMatch[2]},
+              });
+            }
+            break;
+          }
+          case "TagClose": {
+            tokens.push({
+              type: keyword.type,
+              attributes: {name: match[1]},
+            });
+            break;
+          }
+          default:
+            break;
+        }
+        currentString = "";
+        break;
       }
-    } else if (match[3]) {
-      // Text content
-      tokens.push({ type: "Text", attributes: { value: match[3] } });
     }
   }
 

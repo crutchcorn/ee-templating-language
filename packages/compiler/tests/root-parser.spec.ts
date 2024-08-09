@@ -16,9 +16,7 @@ const setup = 123;
 
 test("tokenizeRoot", {}, () => {
   const tokens = tokenizeRoot(source);
-  console.log(tokens)
   const root = parseRoot(tokens);
-  console.log(root)
   expect(root).toEqual({
     "output": {
       "attributes": {
@@ -34,7 +32,7 @@ test("tokenizeRoot", {}, () => {
       "attributes": {},
       "contents": `
 const setup = 123;
-  `,
+`,
     },
   });
 })
