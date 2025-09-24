@@ -1,9 +1,10 @@
-import { CodeMapping, TypeScriptExtraServiceScript, forEachEmbeddedCode, type LanguagePlugin, type VirtualCode } from '@volar/language-core';
+import { CodeMapping, forEachEmbeddedCode, type LanguagePlugin, type VirtualCode } from '@volar/language-core';
+import {TypeScriptExtraServiceScript} from "@volar/typescript";
 import type * as ts from 'typescript';
 import * as html from 'vscode-html-languageservice';
 import { URI } from 'vscode-uri';
 
-export const eeLanguagePlugin: LanguagePlugin<URI> = {
+export const eeLanguagePlugin = {
 	getLanguageId(uri) {
 		if (uri.path.endsWith('.ee')) {
 			return 'ee';
@@ -34,7 +35,7 @@ export const eeLanguagePlugin: LanguagePlugin<URI> = {
 			return scripts;
 		},
 	},
-};
+} satisfies LanguagePlugin<URI>;
 
 const htmlLs = html.getLanguageService();
 

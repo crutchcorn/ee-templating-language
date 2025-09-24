@@ -10,10 +10,10 @@
   "keywords": [],
   "author": "",
   "dependencies": {
-    "typescript": "^5.5.4"
+    "typescript": "^5.9.2"
   },
   "devDependencies": {
-    "@types/node": "^22.1.0",
-    "vitest": "^2.0.5"
+    "@types/node": "^24.5.2",
+    "vitest": "^3.2.4"
   }
 }

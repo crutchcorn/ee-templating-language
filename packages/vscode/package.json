@@ -7,8 +7,12 @@
 	],
 	"displayName": "EE Language Features",
 	"description": "EE Language Features",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/crutchcorn/ee-templating-language.git"
+	},
 	"engines": {
-		"vscode": "^1.82.0"
+		"vscode": "^1.104.0"
 	},
 	"activationEvents": [
 		"onLanguage:ee"
@@ -63,10 +67,10 @@
 	},
 	"devDependencies": {
 		"@ee/language-server": "workspace:*",
-		"@types/vscode": "^1.82.0",
-		"@volar/language-server": "~2.3.0",
-		"@volar/vscode": "~2.3.0",
-		"esbuild": "^0.23.0",
+		"@types/vscode": "^1.104.0",
+		"@volar/language-server": "~2.4.23",
+		"@volar/vscode": "~2.4.23",
+		"esbuild": "^0.25.10",
 		"vsce": "^2.15.0",
 		"vscode-languageclient": "^9.0.1"
 	}

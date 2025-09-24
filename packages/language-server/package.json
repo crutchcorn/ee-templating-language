@@ -10,12 +10,13 @@
 		"ee-language-server": "./bin/ee-language-server.js"
 	},
 	"dependencies": {
-		"@volar/language-core": "~2.3.0",
-		"@volar/language-server": "~2.3.0",
-		"@volar/language-service": "~2.3.0",
-		"volar-service-html": "volar-2.3",
-		"volar-service-typescript": "volar-2.3",
-		"vscode-html-languageservice": "^5.2.0",
-		"vscode-uri": "^3.0.8"
+		"@volar/language-core": "~2.4.23",
+		"@volar/language-server": "~2.4.23",
+		"@volar/language-service": "~2.4.23",
+		"@volar/typescript": "~2.4.23",
+		"volar-service-html": "volar-2.4",
+		"volar-service-typescript": "volar-2.4",
+		"vscode-html-languageservice": "^5.5.1",
+		"vscode-uri": "^3.1.0"
 	}
 }

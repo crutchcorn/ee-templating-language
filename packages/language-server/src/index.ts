@@ -13,13 +13,13 @@ connection.onInitialize(params => {
 	const tsdk = loadTsdkByPath(params.initializationOptions.typescript.tsdk, params.locale);
 	return server.initialize(
 		params,
-		createTypeScriptProject(tsdk.typescript, tsdk.diagnosticMessages, () => [eeLanguagePlugin]),
+		createTypeScriptProject(tsdk.typescript, tsdk.diagnosticMessages, () => ({languagePlugins: [eeLanguagePlugin]})),
 		[
 			createHtmlService(),
 			...createTypeScriptServices(tsdk.typescript),
 			{
 				capabilities: {
-					diagnosticProvider: {},
+					diagnosticProvider: { interFileDependencies: false, workspaceDiagnostics: false },
 				},
 				create(context) {
 					return {
