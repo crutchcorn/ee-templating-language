@@ -85,15 +85,35 @@ function* getEEEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html.HT
 		const setupText = snapshot.getText(setup.startTagEnd, setup.endTagStart);
 		const outputText = snapshot.getText(output.startTagEnd, output.endTagStart);
 
-		// Extract interpolation expressions from output
-		const interpolations = extractInterpolations(outputText);
+		// Extract interpolation expressions and their positions from output
+		const interpolationsData = extractInterpolationsWithPositions(outputText);
 
 		// Create a combined TypeScript context wrapped in a module
 		// This ensures each .ee file has its own isolated scope
 		const base = `export {}; // Make this file a module\n\n`
 		let combinedText = `${base}${setupText}\n\n// Output interpolations:\n`;
-		interpolations.forEach((interp, index) => {
-			combinedText += `const __interp_${index} = ${interp};\n`;
+		
+		const tsInterpolationMappings: CodeMapping[] = [];
+		interpolationsData.forEach((interp, index) => {
+			const interpLine = `const __interp_${index} = ${interp.expression};\n`;
+			const interpStartOffset = combinedText.length;
+			combinedText += interpLine;
+			
+			// Map the interpolation expression to the original source
+			const expressionStart = interpStartOffset + `const __interp_${index} = `.length;
+			tsInterpolationMappings.push({
+				sourceOffsets: [output.startTagEnd! + interp.sourceStart],
+				generatedOffsets: [expressionStart],
+				lengths: [interp.expression.length],
+				data: {
+					completion: true,
+					format: true,
+					navigation: true,
+					semantic: true,
+					structure: true,
+					verification: true,
+				},
+			});
 		});
 
 		yield {
@@ -118,47 +138,46 @@ function* getEEEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html.HT
 						structure: true,
 						verification: true,
 					},
-				}
+				},
+				// Mappings for interpolation expressions
+				...tsInterpolationMappings
 			],
 			embeddedCodes: [],
 		};
 
-		// Also yeild the json output block as a separate virtual code
+		// Create JSON output with interpolations replaced by placeholder values
+		const { transformedText, jsonMappings } = createJsonWithMappings(outputText, interpolationsData, output.startTagEnd);
+		
 		yield {
 			id: 'output_json',
 			languageId: 'json',
 			snapshot: {
-				getText: (start, end) => outputText.substring(start, end),
-				getLength: () => outputText.length,
+				getText: (start, end) => transformedText.substring(start, end),
+				getLength: () => transformedText.length,
 				getChangeRange: () => undefined,
 			},
-			mappings: [
-				{
-					sourceOffsets: [output.startTagEnd],
-					generatedOffsets: [0],
-					lengths: [outputText.length],
-					data: {
-						completion: true,
-						format: true,
-						navigation: true,
-						semantic: true,
-						structure: true,
-						verification: true,
-					},
-				}
-			],
+			mappings: jsonMappings,
 			embeddedCodes: [],
 		};
 	}
 }
 
-function extractInterpolations(text: string): string[] {
-	const interpolations: string[] = [];
+interface InterpolationData {
+	expression: string;
+	sourceStart: number;
+	sourceEnd: number;
+	fullStart: number;  // includes <<
+	fullEnd: number;    // includes >>
+}
+
+function extractInterpolationsWithPositions(text: string): InterpolationData[] {
+	const interpolations: InterpolationData[] = [];
 	let i = 0;
 	const length = text.length;
 
 	while (i < length) {
 		if (text[i] === '<' && text[i + 1] === '<') {
+			const fullStart = i;
 			let j = i + 2;
 			let depth = 1;
 
@@ -171,9 +190,19 @@ function extractInterpolations(text: string): string[] {
 					depth--;
 					if (depth === 0) {
 						// Extract the interpolation content
-						const interpolation = text.substring(i + 2, j).trim();
-						if (interpolation) {
-							interpolations.push(interpolation);
+						const sourceStart = i + 2;
+						const sourceEnd = j;
+						const expression = text.substring(sourceStart, sourceEnd).trim();
+						const fullEnd = j + 2;
+						
+						if (expression) {
+							interpolations.push({
+								expression,
+								sourceStart,
+								sourceEnd,
+								fullStart,
+								fullEnd
+							});
 						}
 						i = j + 2;
 						break;
@@ -194,4 +223,66 @@ function extractInterpolations(text: string): string[] {
 	}
 
 	return interpolations;
+}
+
+function createJsonWithMappings(
+	outputText: string, 
+	interpolationsData: InterpolationData[], 
+	outputStartOffset: number
+): { transformedText: string; jsonMappings: CodeMapping[] } {
+	const mappings: CodeMapping[] = [];
+	let transformedText = '';
+	let lastOffset = 0;
+	let generatedOffset = 0;
+
+	// Process each interpolation
+	for (const interp of interpolationsData) {
+		// Add text before interpolation with mapping
+		const beforeText = outputText.substring(lastOffset, interp.fullStart);
+		if (beforeText.length > 0) {
+			mappings.push({
+				sourceOffsets: [outputStartOffset + lastOffset],
+				generatedOffsets: [generatedOffset],
+				lengths: [beforeText.length],
+				data: {
+					completion: true,
+					format: true,
+					navigation: true,
+					semantic: true,
+					structure: true,
+					verification: true,
+				},
+			});
+			transformedText += beforeText;
+			generatedOffset += beforeText.length;
+		}
+
+		// Replace interpolation with null placeholder for JSON validity
+		const placeholder = 'null';
+		transformedText += placeholder;
+		generatedOffset += placeholder.length;
+		
+		lastOffset = interp.fullEnd;
+	}
+
+	// Add remaining text after last interpolation
+	const remainingText = outputText.substring(lastOffset);
+	if (remainingText.length > 0) {
+		mappings.push({
+			sourceOffsets: [outputStartOffset + lastOffset],
+			generatedOffsets: [generatedOffset],
+			lengths: [remainingText.length],
+			data: {
+				completion: true,
+				format: true,
+				navigation: true,
+				semantic: true,
+				structure: true,
+				verification: true,
+			},
+		});
+		transformedText += remainingText;
+	}
+
+	return { transformedText, jsonMappings: mappings };
 }
