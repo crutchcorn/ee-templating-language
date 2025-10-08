@@ -4,19 +4,19 @@ import type * as ts from 'typescript';
 import * as html from 'vscode-html-languageservice';
 import { URI } from 'vscode-uri';
 
-export const eeLanguagePlugin = {
+export const doodlLanguagePlugin = {
 	getLanguageId(uri) {
-		if (uri.path.endsWith('.ee')) {
-			return 'ee';
+		if (uri.path.endsWith('.dood')) {
+			return 'doodl';
 		}
 	},
 	createVirtualCode(_uri, languageId, snapshot) {
-		if (languageId === 'ee') {
-			return new EEVirtualCode(snapshot);
+		if (languageId === 'doodl') {
+			return new DoodlVirtualCode(snapshot);
 		}
 	},
 	typescript: {
-		extraFileExtensions: [{ extension: 'ee', isMixedContent: true, scriptKind: 3 satisfies ts.ScriptKind.TS }],
+		extraFileExtensions: [{ extension: 'dood', isMixedContent: true, scriptKind: 3 satisfies ts.ScriptKind.TS }],
 		getServiceScript() {
 			return undefined;
 		},
@@ -39,9 +39,9 @@ export const eeLanguagePlugin = {
 
 const htmlLs = html.getLanguageService();
 
-export class EEVirtualCode implements VirtualCode {
+export class DoodlVirtualCode implements VirtualCode {
 	id = 'root';
-	languageId = 'html';
+	languageId = 'doodl';
 	mappings: CodeMapping[];
 	embeddedCodes: VirtualCode[] = [];
 
@@ -63,11 +63,11 @@ export class EEVirtualCode implements VirtualCode {
 			},
 		}];
 		this.htmlDocument = htmlLs.parseHTMLDocument(html.TextDocument.create('', 'html', 0, snapshot.getText(0, snapshot.getLength())));
-		this.embeddedCodes = [...getEEEmbeddedCodes(snapshot, this.htmlDocument)];
+		this.embeddedCodes = [...getDoodlEmbeddedCodes(snapshot, this.htmlDocument)];
 	}
 }
 
-function* getEEEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html.HTMLDocument): Generator<VirtualCode> {
+function* getDoodlEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html.HTMLDocument): Generator<VirtualCode> {
 	const setups = htmlDocument.roots.filter(root => root.tag === 'setup');
 	const outputs = htmlDocument.roots.filter(root => root.tag === 'output');
 
@@ -89,16 +89,16 @@ function* getEEEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html.HT
 		const interpolationsData = extractInterpolationsWithPositions(outputText);
 
 		// Create a combined TypeScript context wrapped in a module
-		// This ensures each .ee file has its own isolated scope
+		// This ensures each .dood file has its own isolated scope
 		const base = `export {}; // Make this file a module\n\n`
 		let combinedText = `${base}${setupText}\n\n// Output interpolations:\n`;
-		
+
 		const tsInterpolationMappings: CodeMapping[] = [];
 		interpolationsData.forEach((interp, index) => {
 			const interpLine = `const __interp_${index} = ${interp.expression};\n`;
 			const interpStartOffset = combinedText.length;
 			combinedText += interpLine;
-			
+
 			// Map the interpolation expression to the original source
 			const expressionStart = interpStartOffset + `const __interp_${index} = `.length;
 			tsInterpolationMappings.push({
@@ -147,7 +147,7 @@ function* getEEEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html.HT
 
 		// Create JSON output with interpolations replaced by placeholder values
 		const { transformedText, jsonMappings } = createJsonWithMappings(outputText, interpolationsData, output.startTagEnd);
-		
+
 		yield {
 			id: 'output_json',
 			languageId: 'json',
@@ -194,7 +194,7 @@ function extractInterpolationsWithPositions(text: string): InterpolationData[] {
 						const sourceEnd = j;
 						const expression = text.substring(sourceStart, sourceEnd).trim();
 						const fullEnd = j + 2;
-						
+
 						if (expression) {
 							interpolations.push({
 								expression,
@@ -226,8 +226,8 @@ function extractInterpolationsWithPositions(text: string): InterpolationData[] {
 }
 
 function createJsonWithMappings(
-	outputText: string, 
-	interpolationsData: InterpolationData[], 
+	outputText: string,
+	interpolationsData: InterpolationData[],
 	outputStartOffset: number
 ): { transformedText: string; jsonMappings: CodeMapping[] } {
 	const mappings: CodeMapping[] = [];
@@ -261,7 +261,7 @@ function createJsonWithMappings(
 		const placeholder = 'null';
 		transformedText += placeholder;
 		generatedOffset += placeholder.length;
-		
+
 		lastOffset = interp.fullEnd;
 	}
 

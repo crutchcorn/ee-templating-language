@@ -1,43 +1,43 @@
 {
 	"private": true,
-	"name": "vscode-ee",
+	"name": "doodl-vscode",
 	"version": "0.0.1",
 	"categories": [
 		"Programming Languages"
 	],
-	"displayName": "EE Language Features",
-	"description": "EE Language Features",
+	"displayName": "Doodl Language Features",
+	"description": "Doodl Language Features",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/crutchcorn/ee-templating-language.git"
+		"url": "https://github.com/crutchcorn/doodl.git"
 	},
 	"engines": {
 		"vscode": "^1.104.0"
 	},
 	"activationEvents": [
-		"onLanguage:ee"
+		"onLanguage:doodl"
 	],
 	"main": "./dist/client.js",
 	"contributes": {
 		"languages": [
 			{
-				"id": "ee",
+				"id": "doodl",
 				"icon": {
 					"light": "images/ee.png",
 					"dark": "images/ee.png"
 				},
 				"extensions": [
-					".ee"
+					".dood"
 				]
 			}
 		],
 		"grammars": [
 			{
-				"language": "ee",
-				"scopeName": "source.ee",
-				"path": "./syntaxes/ee.tmLanguage.json",
+				"language": "doodl",
+				"scopeName": "source.doodl",
+				"path": "./syntaxes/doodl.tmLanguage.json",
 				"embeddedLanguages": {
-					"source.ee": "ee",
+					"source.doodl": "doodl",
 					"text.html.derivative": "html",
 					"text.html.markdown": "markdown",
 					"source.ts": "typescript",
@@ -66,7 +66,7 @@
 		"release": "npm run build && vsce publish --pre-release"
 	},
 	"devDependencies": {
-		"@ee/language-server": "workspace:*",
+		"@doodl/language-server": "workspace:*",
 		"@types/vscode": "^1.104.0",
 		"@volar/language-server": "~2.4.23",
 		"@volar/vscode": "~2.4.23",

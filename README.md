@@ -7,14 +7,14 @@
 - Select `Launch Client` from the drop down.
 - Run the launch config.
 - If you want to debug the server as well use the launch configuration `Attach to Server`
-- In the [Extension Development Host] instance of VSCode, open a `test.js.ee`
+- In the [Extension Development Host] instance of VSCode, open a `test.js.doodl`
   - Type `<setu|` to try HTML completion
   - Type `<setup>console.| }</setup>` to try CSS completion
 
 ## Build .vsix
 
 - Run `pnpm run pack` in this folder
-- `packages/vscode/vscode-ee-0.0.1.vsix` will be created, and you can manual install it to VSCode.
+- `packages/vscode/vscode-doodl-0.0.1.vsix` will be created, and you can manual install it to VSCode.
 
 ## References
 

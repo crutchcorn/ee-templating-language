@@ -1,10 +1,10 @@
 {
 	"compilerOptions": {
-		"target": "ES2021",
+		"target": "ESNext",
 		"lib": [
 			"ES2021",
 		],
-		"module": "Node16",
+		"module": "NodeNext",
 		"sourceMap": true,
 		"composite": true,
 		"declaration": true,
@@ -12,11 +12,6 @@
 		"skipLibCheck": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"baseUrl": "./",
-		"paths": {
-			"@html1/language-server": [
-				"packages/language-server/src"
-			],
-		},
+		"baseUrl": "./"
 	},
 }

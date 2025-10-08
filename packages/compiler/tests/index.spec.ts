@@ -11,13 +11,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 test("compiles a basic file", () => {
-  const result = compile(fs.readFileSync(path.resolve(__dirname, "../../../sample/test.json.ee"), "utf8"), {});
+  const result = compile(fs.readFileSync(path.resolve(__dirname, "../../../sample/test.json.dood"), "utf8"), {});
 
   expect(result).toMatchSnapshot();
 });
 
 test("compiles an array-interpolated file", () => {
-  const result = compile(fs.readFileSync(path.resolve(__dirname, "../../../sample/array.json.ee"), "utf8"), {});
+  const result = compile(fs.readFileSync(path.resolve(__dirname, "../../../sample/array.json.dood"), "utf8"), {});
 
   expect(result).toMatchSnapshot();
 });
