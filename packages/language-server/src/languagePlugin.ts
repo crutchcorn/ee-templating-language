@@ -122,6 +122,33 @@ function* getEEEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html.HT
 			],
 			embeddedCodes: [],
 		};
+
+		// Also yeild the json output block as a separate virtual code
+		yield {
+			id: 'output_json',
+			languageId: 'json',
+			snapshot: {
+				getText: (start, end) => outputText.substring(start, end),
+				getLength: () => outputText.length,
+				getChangeRange: () => undefined,
+			},
+			mappings: [
+				{
+					sourceOffsets: [output.startTagEnd],
+					generatedOffsets: [0],
+					lengths: [outputText.length],
+					data: {
+						completion: true,
+						format: true,
+						navigation: true,
+						semantic: true,
+						structure: true,
+						verification: true,
+					},
+				}
+			],
+			embeddedCodes: [],
+		};
 	}
 }
 
