@@ -7,6 +7,9 @@
 			"include": "text.html.basic#comment"
 		},
 		{
+			"include": "#interpolation"
+		},
+		{
 			"include": "#self-closing-tag"
 		},
 		{
@@ -813,7 +816,12 @@
 						{
 							"begin": "(?<=>)",
 							"end": "(?=<\\/)",
-							"name": "text"
+							"name": "text",
+							"patterns": [
+								{
+									"include": "#interpolation"
+								}
+							]
 						}
 					]
 				}
@@ -821,6 +829,26 @@
 		}
 	],
 	"repository": {
+		"interpolation": {
+			"begin": "(<<)\\s*",
+			"beginCaptures": {
+				"1": {
+					"name": "punctuation.definition.interpolation.begin.ee"
+				}
+			},
+			"end": "\\s*(>>)",
+			"endCaptures": {
+				"1": {
+					"name": "punctuation.definition.interpolation.end.ee"
+				}
+			},
+			"name": "meta.interpolation.ee",
+			"patterns": [
+				{
+					"include": "source.ts"
+				}
+			]
+		},
 		"self-closing-tag": {
 			"begin": "(<)([a-zA-Z0-9:-]+)(?=([^>]+/>))",
 			"beginCaptures": {
@@ -938,6 +966,9 @@
 		},
 		"html-stuff": {
 			"patterns": [
+				{
+					"include": "#interpolation"
+				},
 				{
 					"include": "#output-tag"
 				},

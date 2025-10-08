@@ -1,5 +1,5 @@
 import { CodeMapping, forEachEmbeddedCode, type LanguagePlugin, type VirtualCode } from '@volar/language-core';
-import {TypeScriptExtraServiceScript} from "@volar/typescript";
+import { TypeScriptExtraServiceScript } from "@volar/typescript";
 import type * as ts from 'typescript';
 import * as html from 'vscode-html-languageservice';
 import { URI } from 'vscode-uri';
@@ -71,22 +71,45 @@ function* getEEEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html.HT
 	const setups = htmlDocument.roots.filter(root => root.tag === 'setup');
 	const outputs = htmlDocument.roots.filter(root => root.tag === 'output');
 
-	for (let i = 0; i < setups.length; i++) {
-		const setup = setups[i];
-		if (setup.startTagEnd !== undefined && setup.endTagStart !== undefined) {
-			const text = snapshot.getText(setup.startTagEnd, setup.endTagStart);
-			yield {
-				id: 'setup_' + i,
-				languageId: 'typescript',
-				snapshot: {
-					getText: (start, end) => text.substring(start, end),
-					getLength: () => text.length,
-					getChangeRange: () => undefined,
-				},
-				mappings: [{
+	// If we have both setup and output, combine them into a single TypeScript context
+	// This allows setup variables to be accessible in output interpolations
+	if (setups.length > 0 && outputs.length > 0) {
+		const setup = setups[0]; // Take the first setup block
+		const output = outputs[0]; // Take the first output block
+
+		if (!setup.startTagEnd || !setup.endTagStart ||
+			!output.startTagEnd || !output.endTagStart) {
+			return;
+		}
+
+		const setupText = snapshot.getText(setup.startTagEnd, setup.endTagStart);
+		const outputText = snapshot.getText(output.startTagEnd, output.endTagStart);
+
+		// Extract interpolation expressions from output
+		const interpolations = extractInterpolations(outputText);
+
+		// Create a combined TypeScript context wrapped in a module
+		// This ensures each .ee file has its own isolated scope
+		const base = `export {}; // Make this file a module\n\n`
+		let combinedText = `${base}${setupText}\n\n// Output interpolations:\n`;
+		interpolations.forEach((interp, index) => {
+			combinedText += `const __interp_${index} = ${interp};\n`;
+		});
+
+		yield {
+			id: 'combined_context',
+			languageId: 'typescript',
+			snapshot: {
+				getText: (start, end) => combinedText.substring(start, end),
+				getLength: () => combinedText.length,
+				getChangeRange: () => undefined,
+			},
+			mappings: [
+				// Mapping for setup block
+				{
 					sourceOffsets: [setup.startTagEnd],
-					generatedOffsets: [0],
-					lengths: [text.length],
+					generatedOffsets: [base.length],
+					lengths: [setupText.length],
 					data: {
 						completion: true,
 						format: true,
@@ -95,9 +118,53 @@ function* getEEEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html.HT
 						structure: true,
 						verification: true,
 					},
-				}],
-				embeddedCodes: [],
-			};
+				}
+			],
+			embeddedCodes: [],
+		};
+	}
+}
+
+function extractInterpolations(text: string): string[] {
+	const interpolations: string[] = [];
+	let i = 0;
+	const length = text.length;
+
+	while (i < length) {
+		if (text[i] === '<' && text[i + 1] === '<') {
+			let j = i + 2;
+			let depth = 1;
+
+			// Find the matching >>
+			while (j < length && depth > 0) {
+				if (text[j] === '<' && text[j + 1] === '<') {
+					depth++;
+					j += 2;
+				} else if (text[j] === '>' && text[j + 1] === '>') {
+					depth--;
+					if (depth === 0) {
+						// Extract the interpolation content
+						const interpolation = text.substring(i + 2, j).trim();
+						if (interpolation) {
+							interpolations.push(interpolation);
+						}
+						i = j + 2;
+						break;
+					}
+					j += 2;
+				} else {
+					j++;
+				}
+			}
+
+			if (depth > 0) {
+				// Unclosed interpolation, skip
+				i++;
+			}
+		} else {
+			i++;
 		}
 	}
+
+	return interpolations;
 }

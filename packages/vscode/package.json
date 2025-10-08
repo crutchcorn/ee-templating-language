@@ -60,7 +60,7 @@
 		]
 	},
 	"scripts": {
-		"build": "node scripts/build -- --minify",
+		"build": "node scripts/build.js",
 		"watch": "npm run build -- --watch",
 		"pack": "npm run build && vsce package --pre-release",
 		"release": "npm run build && vsce publish --pre-release"
