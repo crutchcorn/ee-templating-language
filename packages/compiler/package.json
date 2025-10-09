@@ -5,12 +5,14 @@
   "description": "",
   "scripts": {
     "build": "vite build",
-    "test": "vitest"
+    "test:lib": "vitest",
+    "test:build": "publint"
   },
   "keywords": [],
   "author": "",
   "devDependencies": {
     "@types/node": "^24.5.2",
+    "publint": "^0.3.14",
     "vite": "^7.1.9",
     "vitest": "^3.2.4"
   },
