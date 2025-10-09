@@ -1,28 +1,52 @@
-import { CodeMapping, type LanguagePlugin, type VirtualCode } from '@volar/language-core';
-import type * as ts from 'typescript';
-import * as html from 'vscode-html-languageservice';
-import { URI } from 'vscode-uri';
+/// <reference types="@volar/typescript" />
+import { CodeMapping, type VirtualCode } from "@volar/language-core";
+import { type LanguagePlugin } from "@volar/language-service";
+import type * as ts from "typescript";
+import * as html from "vscode-html-languageservice";
+import { URI } from "vscode-uri";
 
-export function createDoodlLanguagePlugin(): LanguagePlugin<URI> {
+export function createDoodlLanguagePlugin(): LanguagePlugin<
+  URI,
+  DoodlVirtualCode
+> {
   return {
-    getLanguageId(uri: URI) {
-      if (uri.path.endsWith('.dood')) {
-        return 'doodl';
+    getLanguageId(fileNameOrUri) {
+      if (String(fileNameOrUri).endsWith(".dood")) {
+        return "doodl";
       }
     },
-    createVirtualCode(_uri: URI, languageId: string, snapshot: ts.IScriptSnapshot) {
-      if (languageId === 'doodl') {
+    createVirtualCode(
+      _uri: URI,
+      languageId: string,
+      snapshot: ts.IScriptSnapshot,
+    ) {
+      if (languageId === "doodl") {
         return new DoodlVirtualCode(snapshot);
       }
-    }
+    },
+    typescript: {
+      extraFileExtensions: [
+        { extension: "dood", isMixedContent: true, scriptKind: 7 },
+      ],
+
+      getServiceScript(root) {
+        if (root.embeddedCodes) {
+          return {
+            code: root.embeddedCodes[0],
+            extension: ".ts",
+            scriptKind: 3,
+          };
+        }
+      },
+    },
   };
 }
 
 const htmlLs = html.getLanguageService();
 
 export class DoodlVirtualCode implements VirtualCode {
-  id = 'root';
-  languageId = 'doodl';
+  id = "root";
+  languageId = "doodl";
   mappings: CodeMapping[];
   embeddedCodes: VirtualCode[] = [];
 
@@ -30,27 +54,41 @@ export class DoodlVirtualCode implements VirtualCode {
   htmlDocument: html.HTMLDocument;
 
   constructor(public snapshot: ts.IScriptSnapshot) {
-    this.mappings = [{
-      sourceOffsets: [0],
-      generatedOffsets: [0],
-      lengths: [snapshot.getLength()],
-      data: {
-        completion: true,
-        format: true,
-        navigation: true,
-        semantic: true,
-        structure: true,
-        verification: true,
+    this.mappings = [
+      {
+        sourceOffsets: [0],
+        generatedOffsets: [0],
+        lengths: [snapshot.getLength()],
+        data: {
+          completion: false,
+          format: false,
+          navigation: false,
+          semantic: false,
+          structure: false,
+          verification: false,
+        },
       },
-    }];
-    this.htmlDocument = htmlLs.parseHTMLDocument(html.TextDocument.create('', 'html', 0, snapshot.getText(0, snapshot.getLength())));
-    this.embeddedCodes = [...getDoodlEmbeddedCodes(snapshot, this.htmlDocument)];
+    ];
+    this.htmlDocument = htmlLs.parseHTMLDocument(
+      html.TextDocument.create(
+        "",
+        "html",
+        0,
+        snapshot.getText(0, snapshot.getLength()),
+      ),
+    );
+    this.embeddedCodes = [
+      ...getDoodlEmbeddedCodes(snapshot, this.htmlDocument),
+    ];
   }
 }
 
-function* getDoodlEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html.HTMLDocument): Generator<VirtualCode> {
-  const setups = htmlDocument.roots.filter(root => root.tag === 'setup');
-  const outputs = htmlDocument.roots.filter(root => root.tag === 'output');
+function* getDoodlEmbeddedCodes(
+  snapshot: ts.IScriptSnapshot,
+  htmlDocument: html.HTMLDocument,
+): Generator<VirtualCode> {
+  const setups = htmlDocument.roots.filter((root) => root.tag === "setup");
+  const outputs = htmlDocument.roots.filter((root) => root.tag === "output");
 
   // If we have both setup and output, combine them into a single TypeScript context
   // This allows setup variables to be accessible in output interpolations
@@ -58,8 +96,12 @@ function* getDoodlEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html
     const setup = setups[0]; // Take the first setup block
     const output = outputs[0]; // Take the first output block
 
-    if (!setup.startTagEnd || !setup.endTagStart ||
-      !output.startTagEnd || !output.endTagStart) {
+    if (
+      !setup.startTagEnd ||
+      !setup.endTagStart ||
+      !output.startTagEnd ||
+      !output.endTagStart
+    ) {
       return;
     }
 
@@ -71,7 +113,7 @@ function* getDoodlEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html
 
     // Create a combined TypeScript context wrapped in a module
     // This ensures each .dood file has its own isolated scope
-    const base = `export {}; // Make this file a module\n\n`
+    const base = `export {}; // Make this file a module\n\n`;
     let combinedText = `${base}${setupText}\n\n// Output interpolations:\n`;
 
     const tsInterpolationMappings: CodeMapping[] = [];
@@ -81,7 +123,8 @@ function* getDoodlEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html
       combinedText += interpLine;
 
       // Map the interpolation expression to the original source
-      const expressionStart = interpStartOffset + `const __interp_${index} = `.length;
+      const expressionStart =
+        interpStartOffset + `const __interp_${index} = `.length;
       tsInterpolationMappings.push({
         sourceOffsets: [output.startTagEnd! + interp.sourceStart],
         generatedOffsets: [expressionStart],
@@ -98,8 +141,8 @@ function* getDoodlEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html
     });
 
     yield {
-      id: 'combined_context',
-      languageId: 'typescript',
+      id: "combined_context",
+      languageId: "typescript",
       snapshot: {
         getText: (start, end) => combinedText.substring(start, end),
         getLength: () => combinedText.length,
@@ -121,17 +164,22 @@ function* getDoodlEmbeddedCodes(snapshot: ts.IScriptSnapshot, htmlDocument: html
           },
         },
         // Mappings for interpolation expressions
-        ...tsInterpolationMappings
+        ...tsInterpolationMappings,
       ],
       embeddedCodes: [],
     };
 
     // Create JSON output with interpolations replaced by placeholder values
-    const { transformedText, jsonMappings } = createJsonWithMappings(outputText, interpolationsData, output.startTagEnd);
+    const { transformedText, jsonMappings } = createJsonWithMappings(
+      outputText,
+      interpolationsData,
+      output.startTagEnd,
+    );
 
+    // TODO: Make generic and not tied to JSON
     yield {
-      id: 'output_json',
-      languageId: 'json',
+      id: "output_json",
+      languageId: "json",
       snapshot: {
         getText: (start, end) => transformedText.substring(start, end),
         getLength: () => transformedText.length,
@@ -147,8 +195,8 @@ interface InterpolationData {
   expression: string;
   sourceStart: number;
   sourceEnd: number;
-  fullStart: number;  // includes <<
-  fullEnd: number;    // includes >>
+  fullStart: number; // includes <<
+  fullEnd: number; // includes >>
 }
 
 function extractInterpolationsWithPositions(text: string): InterpolationData[] {
@@ -157,17 +205,17 @@ function extractInterpolationsWithPositions(text: string): InterpolationData[] {
   const length = text.length;
 
   while (i < length) {
-    if (text[i] === '<' && text[i + 1] === '<') {
+    if (text[i] === "<" && text[i + 1] === "<") {
       const fullStart = i;
       let j = i + 2;
       let depth = 1;
 
       // Find the matching >>
       while (j < length && depth > 0) {
-        if (text[j] === '<' && text[j + 1] === '<') {
+        if (text[j] === "<" && text[j + 1] === "<") {
           depth++;
           j += 2;
-        } else if (text[j] === '>' && text[j + 1] === '>') {
+        } else if (text[j] === ">" && text[j + 1] === ">") {
           depth--;
           if (depth === 0) {
             // Extract the interpolation content
@@ -182,7 +230,7 @@ function extractInterpolationsWithPositions(text: string): InterpolationData[] {
                 sourceStart,
                 sourceEnd,
                 fullStart,
-                fullEnd
+                fullEnd,
               });
             }
             i = j + 2;
@@ -209,10 +257,10 @@ function extractInterpolationsWithPositions(text: string): InterpolationData[] {
 function createJsonWithMappings(
   outputText: string,
   interpolationsData: InterpolationData[],
-  outputStartOffset: number
+  outputStartOffset: number,
 ): { transformedText: string; jsonMappings: CodeMapping[] } {
   const mappings: CodeMapping[] = [];
-  let transformedText = '';
+  let transformedText = "";
   let lastOffset = 0;
   let generatedOffset = 0;
 
@@ -239,7 +287,7 @@ function createJsonWithMappings(
     }
 
     // Replace interpolation with null placeholder for JSON validity
-    const placeholder = 'null';
+    const placeholder = "null";
     transformedText += placeholder;
     generatedOffset += placeholder.length;
 

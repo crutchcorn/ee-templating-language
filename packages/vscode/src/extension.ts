@@ -35,10 +35,7 @@ export async function activate(context: ExtensionContext) {
     {
       documentSelector: [{ language: 'doodl' }],
       initializationOptions: {
-        typescript: { 
-          tsdk,
-          enabled: true
-        }
+        typescript: { tsdk }
       },
       middleware: {}
     }

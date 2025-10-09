@@ -25,6 +25,7 @@
   "dependencies": {
     "@volar/language-core": "~2.4.23",
     "@volar/language-service": "~2.4.23",
+    "@volar/typescript": "~2.4.23",
     "vscode-html-languageservice": "^5.5.1",
     "vscode-uri": "^3.1.0"
   },
