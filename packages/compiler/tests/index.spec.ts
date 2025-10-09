@@ -1,23 +1,34 @@
 import * as path from "node:path";
-import {fileURLToPath} from 'node:url';
-import {dirname} from 'node:path';
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
 
-import {test, expect} from "vitest";
+import { test, expect } from "vitest";
 
-import {compile} from "../src/index.js";
-import * as fs from "node:fs";
+import { compilePath } from "../src/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-test("compiles a basic file", () => {
-  const result = compile(fs.readFileSync(path.resolve(__dirname, "../../../sample/test.json.dood"), "utf8"), {});
+test("compiles a basic file", async () => {
+  const result = await compilePath(
+    path.resolve(__dirname, "../../../sample/test.json.dood"),
+  );
 
   expect(result).toMatchSnapshot();
 });
 
-test("compiles an array-interpolated file", () => {
-  const result = compile(fs.readFileSync(path.resolve(__dirname, "../../../sample/array.json.dood"), "utf8"), {});
+test("compiles an array-interpolated file", async () => {
+  const result = await compilePath(
+    path.resolve(__dirname, "../../../sample/array.json.dood"),
+  );
+
+  expect(result).toMatchSnapshot();
+});
+
+test("compiles a top-level await file", async () => {
+  const result = await compilePath(
+    path.resolve(__dirname, "../../../sample/top-await.json.dood"),
+  );
 
   expect(result).toMatchSnapshot();
 });

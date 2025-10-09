@@ -1,0 +1,13 @@
+<setup>
+const data: any = await new Promise(resolve => {
+    setTimeout(() => resolve({
+        hello: 'world'
+    }), 100);
+});
+</setup>
+
+<output lang="json">
+{
+    "test": <<data.hello>>
+}
+</output>

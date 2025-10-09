@@ -20,6 +20,9 @@ importers:
 
   packages/compiler:
     dependencies:
+      esbuild:
+        specifier: ^0.25.10
+        version: 0.25.10
       typescript:
         specifier: ^5.9.2
         version: 5.9.2
