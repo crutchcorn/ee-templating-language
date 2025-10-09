@@ -17,7 +17,7 @@
 	"activationEvents": [
 		"onLanguage:doodl"
 	],
-	"main": "./dist/client.js",
+	"main": "./out/extension.js",
 	"contributes": {
 		"configuration": [
 			{
