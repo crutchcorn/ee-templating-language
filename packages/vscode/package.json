@@ -23,8 +23,8 @@
 			{
 				"id": "doodl",
 				"icon": {
-					"light": "images/ee.png",
-					"dark": "images/ee.png"
+					"light": "images/doodl_light.png",
+					"dark": "images/doodl_dark.png"
 				},
 				"extensions": [
 					".dood"
