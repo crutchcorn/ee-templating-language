@@ -23,3 +23,11 @@ exports[`compiles an array-interpolated file 1`] = `
 }
 "
 `;
+
+exports[`compiles an import file 1`] = `
+"
+{
+    "test": 123
+}
+"
+`;

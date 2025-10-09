@@ -32,3 +32,11 @@ test("compiles a top-level await file", async () => {
 
   expect(result).toMatchSnapshot();
 });
+
+test("compiles an import file", async () => {
+  const result = await compilePath(
+    path.resolve(__dirname, "../../../sample/import.json.dood"),
+  );
+
+  expect(result).toMatchSnapshot();
+});

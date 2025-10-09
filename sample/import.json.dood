@@ -1,0 +1,13 @@
+<setup>
+import {v4} from "uuid";
+
+const data = {
+    hello: !!v4 ? 123 : null
+};
+</setup>
+
+<output lang="json">
+{
+    "test": <<data.hello>>
+}
+</output>
