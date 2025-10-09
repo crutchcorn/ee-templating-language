@@ -66,10 +66,10 @@
 		"release": "npm run build && vsce publish --pre-release"
 	},
 	"devDependencies": {
-		"doodl-language-server": "workspace:*",
 		"@types/vscode": "^1.104.0",
 		"@volar/language-server": "~2.4.23",
 		"@volar/vscode": "~2.4.23",
+		"doodl-language-server": "workspace:*",
 		"esbuild": "^0.25.10",
 		"vsce": "^2.15.0",
 		"vscode-languageclient": "^9.0.1"
