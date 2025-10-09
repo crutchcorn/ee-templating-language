@@ -1,0 +1,43 @@
+{
+  "name": "doodl-language-server",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "A language server for Doodl",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crutchcorn/doodl.git",
+    "directory": "packages/language-server"
+  },
+  "homepage": "https://github.com/crutchcorn/doodl",
+  "bugs": "https://github.com/crutchcorn/doodl/issues",
+  "author": "Corbin Crutchley <crutchcorn@gmail.com>",
+  "license": "MIT",
+  "exports": "./lib/index.js",
+  "bin": {
+    "doodl-language-server": "./lib/index.js"
+  },
+  "files": [
+    "lib"
+  ],
+  "keywords": [
+    "IntelliSense",
+    "doodl",
+    "typescript",
+    "templating",
+    "volar"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "prepack": "tsc --build --clean && tsc --build",
+    "test-api": "node --test",
+    "test": "npm run test-api"
+  },
+  "dependencies": {
+    "doodl-language-service": "workspace:*",
+    "@volar/language-server": "~2.4.23"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
