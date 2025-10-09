@@ -116,6 +116,9 @@ importers:
       doodl-language-server:
         specifier: workspace:*
         version: link:../language-server
+      doodl-language-service:
+        specifier: workspace:*
+        version: link:../language-service
       doodl-typescript-plugin:
         specifier: workspace:*
         version: link:../typescript-plugin

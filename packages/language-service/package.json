@@ -5,8 +5,8 @@
   "description": "Doodl support for Volar",
   "exports": {
     ".": {
-      "types": "./lib/index.d.ts",
-      "default": "./lib/index.js"
+      "types": "./lib/src/index.d.ts",
+      "default": "./lib/src/index.js"
     }
   },
   "files": [

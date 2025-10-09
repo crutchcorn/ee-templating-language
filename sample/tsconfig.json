@@ -8,5 +8,5 @@
       { "name": "doodl-typescript-plugin" }
     ]
   },
-  "include": ["*.dood", "sample/*.dood"]
+  "include": ["*.dood"]
 }
