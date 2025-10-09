@@ -6,10 +6,13 @@
     "watch": "cd ./packages/vscode && npm run watch",
     "pack": "cd ./packages/vscode && npm run pack",
     "release": "cd ./packages/vscode && npm run release",
-    "test:sherif": "sherif"
+    "format": "prettier --write .",
+    "test:sherif": "sherif",
+    "test:knip": "knip"
   },
   "devDependencies": {
     "@types/node": "^24.5.2",
+    "knip": "^5.64.2",
     "prettier": "^3.6.2",
     "sherif": "^1.6.1",
     "typescript": "^5.9.2",

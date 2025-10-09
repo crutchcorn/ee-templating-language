@@ -1,13 +1,13 @@
-export interface RootAttribute {
+interface RootAttribute {
     name: string;
     value: string;
 }
 
-export interface RootTag {
+interface RootTag {
     name: string;
 }
 
-export interface RootText {
+interface RootText {
     value: string;
 }
 

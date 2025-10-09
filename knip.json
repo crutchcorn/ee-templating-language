@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    "packages/vscode": {
+      "entry": ["src/extension.ts"],
+      "ignoreDependencies": ["doodl-language-server"]
+    }
+  },
+  "ignoreDependencies": ["uuid"]
+}
