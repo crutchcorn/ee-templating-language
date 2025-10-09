@@ -28,15 +28,22 @@ export function createDoodlLanguagePlugin(): LanguagePlugin<
       extraFileExtensions: [
         { extension: "dood", isMixedContent: true, scriptKind: 7 },
       ],
-
-      getServiceScript(root) {
+      getServiceScript() {
+        return undefined;
+      },
+      getExtraServiceScripts(fileName, root) {
         if (root.embeddedCodes) {
-          return {
-            code: root.embeddedCodes[0],
-            extension: ".ts",
-            scriptKind: 3,
-          };
+          const code = root.embeddedCodes[0];
+          return [
+            {
+              fileName: fileName + "." + code.id + ".ts",
+              code,
+              extension: ".ts",
+              scriptKind: 3,
+            },
+          ];
         }
+        return [];
       },
     },
   };
@@ -60,12 +67,12 @@ export class DoodlVirtualCode implements VirtualCode {
         generatedOffsets: [0],
         lengths: [snapshot.getLength()],
         data: {
-          completion: false,
-          format: false,
-          navigation: false,
-          semantic: false,
-          structure: false,
-          verification: false,
+          completion: true,
+          format: true,
+          navigation: true,
+          semantic: true,
+          structure: true,
+          verification: true,
         },
       },
     ];
