@@ -1,5 +1,5 @@
 {
-	"name": "@doodl/language-server",
+	"name": "doodl-language-server",
 	"version": "0.0.1",
 	"main": "out/index.js",
 	"files": [

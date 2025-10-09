@@ -62,9 +62,6 @@ importers:
 
   packages/vscode:
     devDependencies:
-      '@doodl/language-server':
-        specifier: workspace:*
-        version: link:../language-server
       '@types/vscode':
         specifier: ^1.104.0
         version: 1.104.0
@@ -74,6 +71,9 @@ importers:
       '@volar/vscode':
         specifier: ~2.4.23
         version: 2.4.23
+      doodl-language-server:
+        specifier: workspace:*
+        version: link:../language-server
       esbuild:
         specifier: ^0.25.10
         version: 0.25.10
