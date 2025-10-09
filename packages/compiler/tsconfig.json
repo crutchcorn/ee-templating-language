@@ -1,12 +1,14 @@
 {
-	"extends": "../../tsconfig.base.json",
-	"compilerOptions": {
-		"outDir": "out",
-		"rootDir": "src"
-	},
-	"include": [
-		"src",
-      "tests",
-      "vite.config.ts"
-	],
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.config.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

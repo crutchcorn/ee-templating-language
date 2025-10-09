@@ -8,8 +8,9 @@ const outputVarName = "o" + crypto.randomUUID().replace(/-/g, "");
 
 /**
  * @param sourcePath - the absolute path to the `.dood` source file
+ * @returns the compiled output as a string
  */
-export async function compilePath(sourcePath: string) {
+export async function compilePath(sourcePath: string): Promise<string> {
   const source = await fs.readFile(sourcePath, "utf8");
   const sourceDir = path.dirname(sourcePath);
   const rootTokens = tokenizeRoot(source);
@@ -22,7 +23,7 @@ export async function compilePath(sourcePath: string) {
   // Write a temporary file to disk
   const tempPath = path.join(sourceDir, `.doodl_${outputVarName}.ts`);
   await fs.writeFile(tempPath, concatenatedSetupOutput);
-  const compiledOutput = (await import(tempPath))[outputVarName];
+  const compiledOutput: string = (await import(tempPath))[outputVarName];
   await fs.unlink(tempPath);
   return compiledOutput;
 }

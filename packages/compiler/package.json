@@ -6,13 +6,17 @@
   "scripts": {
     "build": "vite build",
     "test:lib": "vitest",
-    "test:build": "publint"
+    "test:build": "publint",
+    "test:types": "tsc --noEmit",
+    "test:attw": "attw --profile esm-only --pack ."
   },
   "keywords": [],
   "author": "",
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
     "@types/node": "^24.5.2",
     "publint": "^0.3.14",
+    "unplugin-dts": "^1.0.0-beta.6",
     "vite": "^7.1.9",
     "vitest": "^3.2.4"
   },
@@ -25,8 +29,8 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "import": "./dist/doodl.js",
-      "require": "./dist/doodl.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   }
 }
