@@ -1,53 +1,36 @@
-import * as serverProtocol from '@volar/language-server/protocol';
-import { activateAutoInsertion, createLabsInfo, getTsdk } from '@volar/vscode';
 import * as vscode from 'vscode';
-import * as lsp from 'vscode-languageclient/node';
 
-let client: lsp.BaseLanguageClient;
-
-export async function activate(context: vscode.ExtensionContext) {
-
-	const serverModule = vscode.Uri.joinPath(context.extensionUri, 'dist', 'server.js');
-	const runOptions = { execArgv: <string[]>[] };
-	const debugOptions = { execArgv: ['--nolazy', '--inspect=' + 6009] };
-	const serverOptions: lsp.ServerOptions = {
-		run: {
-			module: serverModule.fsPath,
-			transport: lsp.TransportKind.ipc,
-			options: runOptions
-		},
-		debug: {
-			module: serverModule.fsPath,
-			transport: lsp.TransportKind.ipc,
-			options: debugOptions
-		},
-	};
-	const clientOptions: lsp.LanguageClientOptions = {
-		documentSelector: [{ language: 'doodl' }],
-		initializationOptions: {
-			typescript: {
-				tsdk: (await getTsdk(context))!.tsdk,
-			},
-		},
-	};
-	client = new lsp.LanguageClient(
-		'doodl-language-server',
-		'Doodl Language Server',
-		serverOptions,
-		clientOptions,
-	);
-	await client.start();
-
-	// support for auto close tag
-	activateAutoInsertion('doodl', client);
-
-	// support for https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volarjs-labs
-	// ref: https://twitter.com/johnsoncodehk/status/1656126976774791168
-	const labsInfo = createLabsInfo(serverProtocol);
-	labsInfo.addLanguageClient(client);
-	return labsInfo.extensionExports;
+export async function activate(_context: vscode.ExtensionContext) {
+	// The TypeScript plugin is automatically loaded by VS Code's TypeScript service
+	// when it's configured in the workspace's tsconfig.json or VS Code settings
+	
+	// Add configuration to suggest users enable the plugin
+	const config = vscode.workspace.getConfiguration();
+	const tsConfig = config.get('typescript.preferences') as any || {};
+	
+	if (!tsConfig.plugins || !tsConfig.plugins.find((p: any) => p.name === 'doodl-typescript-plugin')) {
+		// Show a notification to configure the TypeScript plugin
+		const action = await vscode.window.showInformationMessage(
+			'To enable Doodl language features, add the TypeScript plugin to your workspace settings or tsconfig.json',
+			'Configure Now',
+			'Learn More'
+		);
+		
+		if (action === 'Configure Now') {
+			// Try to update workspace settings
+			await config.update('typescript.preferences.plugins', [
+				...(tsConfig.plugins || []),
+				{ name: 'doodl-typescript-plugin' }
+			], vscode.ConfigurationTarget.Workspace);
+			
+			// Restart TypeScript service to pick up the plugin
+			await vscode.commands.executeCommand('typescript.restartTsServer');
+		} else if (action === 'Learn More') {
+			vscode.env.openExternal(vscode.Uri.parse('https://github.com/crutchcorn/doodl#typescript-plugin'));
+		}
+	}
 }
 
-export function deactivate(): Thenable<any> | undefined {
-	return client?.stop();
+export function deactivate(): void {
+	// TypeScript plugin cleanup is handled by VS Code's TypeScript service
 }

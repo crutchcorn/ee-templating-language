@@ -1,0 +1,36 @@
+{
+  "name": "doodl-language-service",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Doodl support for Volar",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "files": [
+    "lib"
+  ],
+  "keywords": [
+    "doodl",
+    "typescript",
+    "volar",
+    "templating"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "prepack": "tsc --build --clean && tsc --build"
+  },
+  "dependencies": {
+    "@volar/language-core": "~2.4.23",
+    "@volar/language-service": "~2.4.23",
+    "vscode-html-languageservice": "^5.5.1",
+    "vscode-uri": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "sideEffects": false
+}

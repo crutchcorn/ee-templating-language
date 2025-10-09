@@ -1,0 +1,34 @@
+{
+  "name": "doodl-typescript-plugin",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "A TypeScript plugin to support language features in Doodl files",
+  "main": "./lib/index.cjs",
+  "exports": {
+    "types": "./types/index.d.cts",
+    "default": "./lib/index.cjs"
+  },
+  "files": [
+    "lib",
+    "types"
+  ],
+  "keywords": [
+    "doodl",
+    "typescript",
+    "plugin",
+    "templating"
+  ],
+  "scripts": {
+    "prepack": "tsc --build --clean && tsc --build",
+    "build": "tsc --build"
+  },
+  "dependencies": {
+    "doodl-language-service": "workspace:*",
+    "@volar/typescript": "~2.4.23"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "sideEffects": false
+}
