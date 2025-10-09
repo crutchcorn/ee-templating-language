@@ -2,7 +2,18 @@
   "name": "doodl",
   "type": "module",
   "version": "0.0.1",
-  "description": "",
+  "description": "A modern type-safe templating engine",
+  "author": "crutchcorn",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crutchcorn/doodl.git",
+    "directory": "packages/compiler"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/crutchcorn"
+  },
   "scripts": {
     "build": "vite build",
     "test:lib": "vitest",
@@ -11,7 +22,6 @@
     "test:attw": "attw --profile esm-only --pack ."
   },
   "keywords": [],
-  "author": "",
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
     "@types/node": "^24.5.2",
