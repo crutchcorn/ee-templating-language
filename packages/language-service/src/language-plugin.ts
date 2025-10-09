@@ -26,7 +26,11 @@ export function createDoodlLanguagePlugin(): LanguagePlugin<
     },
     typescript: {
       extraFileExtensions: [
-        { extension: "dood", isMixedContent: true, scriptKind: 7 },
+        {
+          extension: "dood",
+          isMixedContent: true,
+          scriptKind: 3 satisfies ts.ScriptKind.TS,
+        },
       ],
       getServiceScript() {
         return undefined;
